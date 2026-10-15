@@ -32,3 +32,4 @@ python main.py
 
 # 4. Run the automated tests
 pytest
+```
