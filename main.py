@@ -1,50 +1,45 @@
+from pathlib import Path
 import pandas as pd
 
 
 class DataLoader:
-    def __init__(self, file_path):
-        # שומרים את נתיב הקובץ בתוך האובייקט
-        self.file_path = file_path
+    """Handles loading telemetry data from CSV files."""
 
-    def load_data(self):
-        # קוראים את הקובץ באמצעות המשתנה מה"תיק" (self.file_path)
-        # ושומרים למשתנה מקומי זמני בשם df
-        df = pd.read_csv(self.file_path)
-        # מחזירים אותו החוצה
-        return df
+    def __init__(self, file_path: str | Path):
+        self.file_path = Path(file_path)
+
+    def load_data(self) -> pd.DataFrame:
+        if not self.file_path.exists():
+            raise FileNotFoundError(f"Data file not found: {self.file_path}")
+        return pd.read_csv(self.file_path)
 
 
 class AnomalyDetector:
-    def __init__(self, df):
-        # שומרים את הטבלה בתוך האובייקט
+    """Detects anomalies in time-series data using Z-Score thresholding."""
+
+    def __init__(self, df: pd.DataFrame, threshold_std: float = 3.0):
         self.df = df
+        self.threshold_std = threshold_std
 
-    def detect_anomalies(self):
-        # המשימה שלך: תעתיק לפה את הלוגיקה של חישוב הממוצע, סטיית התקן והסינון
-        # שים לב שאתה צריך להשתמש ב- self.df במקום סתם df
+    def detect_anomalies(self) -> pd.DataFrame:
         average_cpu = self.df['value'].mean()
-        print("\n-----Average CPU utilization-----")
-        print(f"Average CPU: {average_cpu:.5f}")
-
         cpu_std = self.df['value'].std()
-        threshold = average_cpu + (3 * cpu_std)
 
+        if cpu_std == 0 or pd.isna(cpu_std):
+            return pd.DataFrame(columns=self.df.columns)
+
+        threshold = average_cpu + (self.threshold_std * cpu_std)
         anomalies = self.df[self.df['value'] > threshold]
-        print("--- Anomalies Detected ---")
         return anomalies
 
 
-# --- כאן מתחיל החלק שמריץ את התוכנית בפועל ---
-
 if __name__ == "__main__":
-    # 1. טעינת הנתונים דרך המחלקה הראשונה
     loader = DataLoader('ec2_cpu_utilization_24ae8d.csv')
     my_data = loader.load_data()
 
-    # 2. זיהוי חריגות דרך המחלקה השנייה
     detector = AnomalyDetector(my_data)
     found_anomalies = detector.detect_anomalies()
 
-    # 3. הדפסה
-    print("--- Anomalies Detected (OOP Version) ---")
+    print(f"Average CPU: {my_data['value'].mean():.5f}")
+    print("\n--- Anomalies Detected ---")
     print(found_anomalies)
