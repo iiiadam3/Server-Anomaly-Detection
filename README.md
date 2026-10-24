@@ -20,9 +20,11 @@ This project simulates a real-world **Site Reliability Engineering (SRE)** and *
 
 ## ⚙️ How to Run Locally
 
+## ⚙️ How to Run Locally
+
 ```bash
 # 1. Clone the repository
-git clone [https://github.com/iiiadam3/Server-Anomaly-Detection.git](https://github.com/iiiadam3/Server-Anomaly-Detection.git)
+git clone https://github.com/iiiadam3/Server-Anomaly-Detection.git
 
 # 2. Install dependencies
 pip install -r requirements.txt
@@ -32,3 +34,4 @@ python main.py
 
 # 4. Run the automated tests
 pytest
+```
