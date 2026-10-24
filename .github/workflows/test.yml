@@ -1,7 +1,3 @@
----
-
-### 2. הקובץ `.github/workflows/test.yml` המעודכן:
-```yaml
 name: Python Tests CI
 
 on:
